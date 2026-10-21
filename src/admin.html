@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Althman-style | Painel do Funcionário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./admin.css">
+</head>
+<body class="bg-zinc-950 text-zinc-100 antialiased selection:bg-white selection:text-black">
+
+    <div id="login-screen" class="min-h-screen flex items-center justify-center px-4 bg-zinc-950">
+        <div class="max-w-md w-full bg-zinc-900 border border-zinc-800 p-8 shadow-2xl">
+            <div class="text-center mb-8">
+                <span class="text-2xl font-black uppercase tracking-tighter bg-white text-black px-2 py-0.5 rounded-sm">A</span>
+                <h1 class="text-2xl font-black uppercase tracking-tight mt-4">Painel Restrito</h1>
+                <p class="text-xs text-zinc-400 mt-1 uppercase tracking-widest">Althman-style - Gestão</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">E-mail de Acesso</label>
+                    <input type="email" id="login-email" required placeholder="admin@althman.com" class="w-full bg-zinc-950 border border-zinc-800 px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Senha</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-zinc-950 border border-zinc-800 px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors">
+                </div>
+                <button type="submit" class="w-full bg-white text-black font-bold py-4 uppercase tracking-wider hover:bg-zinc-200 transition-colors mt-2">Entrar no Sistema</button>
+                <p class="text-xs text-zinc-500 text-center mt-4">Credenciais de teste: <b>admin@althman.com</b> / <b>admin123</b></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-dashboard" class="hidden min-h-screen flex flex-col">
+        <header class="bg-zinc-900 border-b border-zinc-800 py-4 px-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-xl font-black uppercase tracking-tighter bg-white text-black px-2 py-0.5 rounded-sm">A</span>
+                <span class="font-bold text-sm uppercase tracking-wider">Althman-style • Gestão de Estoque & Promoções</span>
+            </div>
+            <button id="btn-logout" class="text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white bg-zinc-950 border border-zinc-800 px-4 py-2">Sair</button>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-1">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="bg-zinc-900 border border-zinc-800 p-6 h-fit">
+                    <h2 id="form-title" class="text-lg font-bold uppercase tracking-tight mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-plus text-sm"></i> Cadastrar Novo Produto
+                    </h2>
+                    <form id="product-form" class="space-y-4">
+                        <input type="hidden" id="prod-id">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Nome do Produto</label>
+                            <input type="text" id="prod-name" required placeholder="Ex: Jaqueta Urban Tech" class="w-full bg-zinc-950 border border-zinc-800 px-4 py-3 text-sm text-white focus:outline-none focus:border-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Preço Normal (R$)</label>
+                            <input type="number" step="0.01" id="prod-price" required placeholder="299.90" class="w-full bg-zinc-950 border border-zinc-800 px-4 py-3 text-sm text-white focus:outline-none focus:border-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Preço Promocional (R$) <span class="text-zinc-500 font-normal">(Opcional)</span></label>
+                            <input type="number" step="0.01" id="prod-promo" placeholder="Deixe 0 se não houver promo" class="w-full bg-zinc-950 border border-zinc-800 px-4 py-3 text-sm text-white focus:outline-none focus:border-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Categoria</label>
+                            <select id="prod-category" aria-label="Categoria" class="w-full bg-zinc-950 border border-zinc-800 px-4 py-3 text-sm text-white focus:outline-none focus:border-white">
+                                <option value="Vestuário">Vestuário</option>
+                                <option value="Tênis">Tênis</option>
+                                <option value="Acessórios">Acessórios</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Quantidade em Estoque</label>
+                            <input type="number" id="prod-stock" required placeholder="10" class="w-full bg-zinc-950 border border-zinc-800 px-4 py-3 text-sm text-white focus:outline-none focus:border-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">URL da Imagem</label>
+                            <input type="url" id="prod-image" required placeholder="https://exemplo.com/foto.jpg" class="w-full bg-zinc-950 border border-zinc-800 px-4 py-3 text-sm text-white focus:outline-none focus:border-white">
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="submit" id="btn-save" class="flex-1 bg-white text-black font-bold py-4 uppercase tracking-wider hover:bg-zinc-200 transition-colors mt-2">Salvar no Estoque</button>
+                            <button type="button" id="btn-cancel" class="hidden bg-zinc-800 text-zinc-300 font-bold px-4 py-4 uppercase tracking-wider hover:bg-zinc-700 transition-colors mt-2">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 bg-zinc-900 border border-zinc-800 p-6">
+                    <h2 class="text-lg font-bold uppercase tracking-tight mb-6">Controle de Estoque & Produtos</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-zinc-800 text-xs font-bold uppercase tracking-wider text-zinc-400">
+                                    <th class="py-3 px-4">Produto</th>
+                                    <th class="py-3 px-4">Categoria</th>
+                                    <th class="py-3 px-4">Preços</th>
+                                    <th class="py-3 px-4">Estoque</th>
+                                    <th class="py-3 px-4 text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-product-list" class="divide-y divide-zinc-800 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="./admin.js"></script>
+</body>
+</html>

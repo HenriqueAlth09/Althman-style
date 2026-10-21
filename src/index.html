@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Althman-style | Premium Urban Wear</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body class="bg-zinc-950 text-zinc-100 antialiased selection:bg-white selection:text-black">
+
+    <div class="bg-zinc-900 text-zinc-400 text-xs py-2 px-4 text-center tracking-widest uppercase border-b border-zinc-800">
+        Frete grátis em compras acima de R$ 299,90 • Parcele em até 10x sem juros
+    </div>
+
+    <header class="sticky top-0 z-40 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="index.html" class="text-xl md:text-2xl font-black tracking-tighter uppercase flex items-center gap-1.5">
+                <span class="bg-white text-black px-2 py-0.5 rounded-sm">A</span>LTHMAN<span class="font-light text-zinc-400">-STYLE</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wide">
+                <a href="#produtos" class="hover:text-zinc-400 transition-colors">LANÇAMENTOS</a>
+                <a href="#produtos" class="hover:text-zinc-400 transition-colors">VESTUÁRIO</a>
+                <a href="#produtos" class="hover:text-zinc-400 transition-colors">TÊNIS</a>
+                <a href="#produtos" class="hover:text-zinc-400 transition-colors">PROMOÇÕES</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleCart()" class="relative p-2.5 rounded-full bg-zinc-900 hover:bg-zinc-800 transition-colors border border-zinc-800">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                    <span id="cart-badge" class="absolute -top-1 -right-1 bg-white text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative h-[85vh] flex items-center justify-center overflow-hidden bg-zinc-900">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1920&q=80" alt="Hero background" class="w-full h-full object-cover opacity-40 scale-105">
+            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>
+        </div>
+        <div class="relative z-10 text-center max-w-4xl mx-auto px-4">
+            <span class="text-xs uppercase tracking-[0.3em] font-bold text-zinc-400 bg-zinc-900/80 border border-zinc-700 px-4 py-1.5 rounded-full">Nova Coleção Outono/Inverno</span>
+            <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tight mt-6 mb-6">Redefina Seu Estilo Urbano</h1>
+            <p class="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-8 font-light">Peças exclusivas com design de alta performance, caimento impecável e acabamento premium.</p>
+            <a href="#produtos" class="inline-block bg-white text-black font-bold px-8 py-4 uppercase tracking-wider rounded-none hover:bg-zinc-200 transition-all shadow-xl hover:scale-105">Explorar Coleção</a>
+        </div>
+    </section>
+
+    <main id="produtos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-zinc-500">Vitrine Oficial</span>
+                <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tight mt-1">Lançamentos & Promoções</h2>
+            </div>
+            <p id="product-count" class="text-sm text-zinc-400 mt-2 md:mt-0">Carregando estoque...</p>
+        </div>
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+    </main>
+
+    <div id="cart-drawer" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex justify-end">
+        <div class="w-full max-w-md bg-zinc-900 h-full flex flex-col border-l border-zinc-800 shadow-2xl">
+            <div class="p-6 border-b border-zinc-800 flex items-center justify-between">
+                <h3 class="font-bold text-lg uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping"></i> Seu Carrinho
+                </h3>
+                <button type="button" onclick="toggleCart()" aria-label="Fechar carrinho" class="p-2 text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark text-xl" aria-hidden="true"></i></button>
+            </div>
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+            <div class="p-6 border-t border-zinc-800 bg-zinc-950">
+                <div class="flex justify-between items-center mb-4 text-lg font-bold">
+                    <span>Total:</span>
+                    <span id="cart-total" class="text-xl">R$ 0,00</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-white text-black font-bold py-4 uppercase tracking-wider hover:bg-zinc-200 transition-colors">Finalizar Pedido</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-zinc-900 border-t border-zinc-800 py-12 text-zinc-400 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div>
+                <p class="font-bold text-white uppercase tracking-wider">Althman-style</p>
+                <p class="text-xs mt-1">© 2026 Todos os direitos reservados.</p>
+            </div>
+            <div class="flex gap-6 text-lg">
+                <a href="#" aria-label="Instagram" class="hover:text-white"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                <a href="#" aria-label="Twitter" class="hover:text-white"><i class="fa-brands fa-twitter" aria-hidden="true"></i></a>
+                <a href="#" aria-label="TikTok" class="hover:text-white"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
