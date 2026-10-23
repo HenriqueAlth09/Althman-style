@@ -1,97 +1,48 @@
-import './style.css'
-import heroImg from './assets/hero.png'
-import javascriptLogo from './assets/javascript.svg'
-import viteLogo from './assets/vite.svg'
-import { setupCounter } from './counter.js'
-
-document.querySelector('#app').innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${javascriptLogo}" class="framework" alt="JavaScript logo"/>
-    <img src="${viteLogo}" class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.js</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
-
-<div class="ticks"></div>
-
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src="${viteLogo}" alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-          <img class="button-icon" src="${javascriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
-
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
-
-setupCounter(document.querySelector('#counter'))
-
 import './style.css';
 
 let cart = [];
+let currentCategory = 'todos';
+let productsCache = [];
 
-function getProducts() {
-    const data = localStorage.getItem('althman_style_products');
-    if (!data) {
-        const defaultProducts = [
-            { id: 1, name: 'Jaqueta Bomber Oversized Althman', price: 449.90, promoPrice: 389.90, category: 'Vestuário', stock: 12, image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80' },
-            { id: 2, name: 'Tênis Runner Pro Tech Edition', price: 699.90, promoPrice: 0, category: 'Tênis', stock: 8, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80' },
-            { id: 3, name: 'Moletom Minimalist Black', price: 299.90, promoPrice: 249.90, category: 'Vestuário', stock: 15, image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80' },
-            { id: 4, name: 'Camiseta Heavyweight Signature', price: 159.90, promoPrice: 0, category: 'Vestuário', stock: 25, image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80' }
-        ];
-        localStorage.setItem('althman_style_products', JSON.stringify(defaultProducts));
-        return defaultProducts;
+async function fetchProducts() {
+    try {
+        const response = await fetch('http://localhost:3000/api/products');
+        productsCache = await response.json();
+        renderProducts();
+    } catch (error) {
+        console.error('Erro ao buscar produtos do backend:', error);
+        document.getElementById('product-grid').innerHTML = `<div class="col-span-full text-center py-16 text-red-500">Erro ao conectar ao servidor backend. Certifique-se de que o Node.js está rodando.</div>`;
     }
-    return JSON.parse(data);
+}
+
+window.filterCategory = function(category) {
+    currentCategory = category;
+    renderProducts();
 }
 
 function renderProducts() {
-    const products = getProducts();
     const grid = document.getElementById('product-grid');
     const countEl = document.getElementById('product-count');
     
-    if (countEl) countEl.innerText = `Mostrando ${products.length} produtos`;
     if (!grid) return;
 
-    if (products.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-16 text-zinc-500">Nenhum produto cadastrado no momento. Acesse o painel do funcionário para cadastrar.</div>`;
+    let filtered = productsCache;
+    if (currentCategory === 'Vestuário') {
+        filtered = productsCache.filter(p => p.category === 'Vestuário');
+    } else if (currentCategory === 'Tênis') {
+        filtered = productsCache.filter(p => p.category === 'Tênis');
+    } else if (currentCategory === 'Promoções') {
+        filtered = productsCache.filter(p => p.promoPrice && p.promoPrice > 0 && p.promoPrice < p.price);
+    }
+
+    if (countEl) countEl.innerText = `Mostrando ${filtered.length} produtos`;
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-16 text-zinc-500">Nenhum produto encontrado nesta categoria.</div>`;
         return;
     }
 
-    grid.innerHTML = products.map(p => {
+    grid.innerHTML = filtered.map(p => {
         const hasPromo = p.promoPrice && p.promoPrice > 0 && p.promoPrice < p.price;
         const currentPrice = hasPromo ? p.promoPrice : p.price;
 
@@ -123,8 +74,7 @@ function renderProducts() {
 }
 
 window.addToCart = function(id) {
-    const products = getProducts();
-    const product = products.find(p => p.id === id);
+    const product = productsCache.find(p => p.id === id);
     if (!product || product.stock <= 0) return;
 
     const effectivePrice = (product.promoPrice && product.promoPrice > 0 && product.promoPrice < product.price) ? product.promoPrice : product.price;
@@ -190,13 +140,10 @@ window.toggleCart = function() {
     if (drawer) drawer.classList.toggle('hidden');
 }
 
-// Fluxo Interativo de Pagamento (PIX, Cartão e Boleto)
 window.checkout = function() {
     if (cart.length === 0) return;
-
     const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     
-    // Cria um modal dinâmico de pagamento na tela
     const modalId = 'checkout-modal';
     let existingModal = document.getElementById(modalId);
     if (existingModal) existingModal.remove();
@@ -236,7 +183,6 @@ window.selectPayment = function(method) {
     window.selectedPaymentMethod = method;
     const details = document.getElementById('payment-details');
     
-    // Destaca o botão selecionado
     ['pix', 'card', 'boleto'].forEach(m => {
         const btn = document.getElementById(`pay-${m}`);
         if(btn) btn.classList.remove('border-white', 'bg-zinc-800');
@@ -244,55 +190,44 @@ window.selectPayment = function(method) {
     document.getElementById(`pay-${method}`).classList.add('border-white', 'bg-zinc-800');
 
     if (method === 'pix') {
-        details.innerHTML = `
-            <p class="font-bold text-white mb-1">Pagamento instantâneo via PIX</p>
-            <p>Um QR Code simulado foi gerado. O desconto de 5% foi aplicado e a aprovação é imediata após a confirmação.</p>
-        `;
+        details.innerHTML = `<p class="font-bold text-white mb-1">PIX Selecionado</p><p>Aprovação imediata após a confirmação.</p>`;
     } else if (method === 'card') {
-        details.innerHTML = `
-            <p class="font-bold text-white mb-1">Cartão de Crédito</p>
-            <input type="text" placeholder="Número do Cartão (0000 0000 0000 0000)" class="w-full mt-2 bg-zinc-900 border border-zinc-700 p-2 text-white text-xs">
-            <div class="grid grid-cols-2 gap-2 mt-2">
-                <input type="text" placeholder="MM/AA" class="bg-zinc-900 border border-zinc-700 p-2 text-white text-xs">
-                <input type="text" placeholder="CVV" class="bg-zinc-900 border border-zinc-700 p-2 text-white text-xs">
-            </div>
-        `;
+        details.innerHTML = `<p class="font-bold text-white mb-1">Cartão de Crédito</p><input type="text" placeholder="Número do Cartão" class="w-full mt-2 bg-zinc-900 border border-zinc-700 p-2 text-white text-xs">`;
     } else if (method === 'boleto') {
-        details.innerHTML = `
-            <p class="font-bold text-white mb-1">Boleto Bancário</p>
-            <p>O código de barras será gerado ao confirmar. O prazo de compensação bancária é de até 2 dias úteis.</p>
-        `;
+        details.innerHTML = `<p class="font-bold text-white mb-1">Boleto Bancário</p><p>Compensação em até 2 dias úteis.</p>`;
     }
 }
 
-window.confirmOrder = function() {
+window.confirmOrder = async function() {
     if (!window.selectedPaymentMethod) {
         alert('Por favor, selecione uma forma de pagamento!');
         return;
     }
 
-    const products = getProducts();
+    try {
+        const itemsToCheckout = cart.map(item => ({ id: item.id, qty: item.qty }));
+        
+        const response = await fetch('http://localhost:3000/api/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: itemsToCheckout })
+        });
 
-    // Desconta o estoque dos produtos comprados
-    cart.forEach(cartItem => {
-        const prod = products.find(p => p.id === cartItem.id);
-        if (prod) {
-            prod.stock -= cartItem.qty;
-        }
-    });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Erro ao processar checkout');
 
-    localStorage.setItem('althman_style_products', JSON.stringify(products));
-    
-    alert('Pagamento aprovado com sucesso! Pedido registrado e estoque atualizado.');
-    
-    // Fecha os modais
-    const modal = document.getElementById('checkout-modal');
-    if (modal) modal.remove();
-    
-    cart = [];
-    updateCartUI();
-    window.toggleCart();
-    renderProducts();
+        alert('Pagamento aprovado! Estoque atualizado no banco de dados.');
+        
+        const modal = document.getElementById('checkout-modal');
+        if (modal) modal.remove();
+        
+        cart = [];
+        updateCartUI();
+        window.toggleCart();
+        fetchProducts();
+    } catch (err) {
+        alert('Erro: ' + err.message);
+    }
 }
 
-renderProducts();
+fetchProducts();
